@@ -83,7 +83,7 @@ impl Process {
 
     fn ticks_per_second() -> Result<i64, SystemError> {
         match sysconf(CLK_TCK) {
-            Ok(Some(tps)) => Ok(tps),
+            Ok(Some(tps)) => Ok(tps.into()),
             Ok(None) => Err(nix::Error::UnsupportedOperation.into()),
             Err(err) => Err(err.into()),
         }

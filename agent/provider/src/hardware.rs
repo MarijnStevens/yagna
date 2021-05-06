@@ -475,7 +475,7 @@ fn partition_space<P: AsRef<Path>>(path: P) -> Result<u64, Error> {
         use nix::sys::statvfs::statvfs;
         let stat =
             statvfs(path.as_os_str()).map_err(|e| sys_info::Error::General(e.to_string()))?;
-        Ok(stat.blocks_available() as u64 * stat.fragment_size())
+        Ok(stat.blocks_available() as u64 * stat.fragment_size() as u64)
     }
 }
 
