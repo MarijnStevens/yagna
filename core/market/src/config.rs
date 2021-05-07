@@ -5,9 +5,9 @@ use structopt::StructOpt;
 pub struct Config {
     #[structopt(flatten)]
     pub discovery: DiscoveryConfig,
-    #[structopt(flatten)]
+    #[structopt(skip)]
     pub subscription: SubscriptionConfig,
-    #[structopt(flatten)]
+    #[structopt(skip)]
     pub events: EventsConfig,
 }
 
@@ -33,19 +33,34 @@ pub struct SubscriptionConfig {
     pub default_ttl: chrono::Duration,
 }
 
-#[derive(StructOpt, Clone)]
+#[derive(Clone)]
 pub struct EventsConfig {
-    #[structopt(env = "MAX_MARKET_EVENTS_DEFAULT", default_value = "20")]
     pub max_events_default: i32,
-    #[structopt(env = "MAX_MARKET_EVENTS_MAX", default_value = "100")]
     pub max_events_max: i32,
 }
 
 impl Config {
     pub fn from_env() -> Result<Config, structopt::clap::Error> {
-        // Empty command line arguments, because we want to use ENV fallback
-        // or default values if ENV variables are not set.
-        Ok(Config::from_iter_safe(&[""])?)
+        // Mock command line arguments, because we want to use ENV fallback
+        // or default values if ENV variables don't exist.
+        Ok(Config::from_iter_safe(vec!["yagna"].iter())?)
+    }
+}
+
+impl Default for SubscriptionConfig {
+    fn default() -> Self {
+        SubscriptionConfig {
+            default_ttl: chrono::Duration::seconds(50),
+        }
+    }
+}
+
+impl Default for EventsConfig {
+    fn default() -> Self {
+        EventsConfig {
+            max_events_default: 20,
+            max_events_max: 100,
+        }
     }
 }
 
@@ -55,18 +70,19 @@ fn parse_chrono_duration(s: &str) -> Result<chrono::Duration, anyhow::Error> {
 
 #[cfg(test)]
 mod test {
-    use super::Config;
+    use structopt::StructOpt;
+
+    use super::SubscriptionConfig;
 
     #[test]
-    fn test_default_structopt_subscription_ttl() {
-        let c = Config::from_env().unwrap();
-        assert_eq!(60, c.subscription.default_ttl.num_minutes());
+    fn test_default_subscription_ttl() {
+        let d = SubscriptionConfig::default();
+        assert_eq!(60, d.default_ttl.num_minutes());
     }
 
     #[test]
-    fn test_default_structopt_events() {
-        let c = Config::from_env().unwrap();
-        assert_eq!(20, c.events.max_events_default);
-        assert_eq!(100, c.events.max_events_max);
+    fn test_default_structopt_subscription_ttl() {
+        let d = SubscriptionConfig::from_iter(&[""]);
+        assert_eq!(60, d.default_ttl.num_minutes());
     }
 }
