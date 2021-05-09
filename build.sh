@@ -1,8 +1,7 @@
 #!/bin/bash
 
-
-# 
-# packages:  libssl-dev:aarch64 
+#
+# packages:  libssl-dev:aarch64
 # sudo apt-get install libglib2.0
 #ARCH="aarch64"
 #TARGET="$ARCH-unknown-linux-gnu"
