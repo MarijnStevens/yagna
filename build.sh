@@ -12,4 +12,4 @@ mkdir -p ../yagna-binaries/ && \
 \cp "$TARGET_DIR/gftp" "../yagna-binaries/" && \
 \cp "$TARGET_DIR/yagna" "../yagna-binaries/" && \
 \cp "$TARGET_DIR/golemsp" "../yagna-binaries/" && \
-\cp "$TARGET_DIR/ya-provider" "../yagna-binaries/" 
+\cp "$TARGET_DIR/ya-provider" "../yagna-binaries/" || exit 1 
